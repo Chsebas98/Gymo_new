@@ -15,6 +15,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
+//Api functions
+import { register } from "../api/user";
+
 const SignUp = () => {
 	//form states
 	const [username, setUsername] = useState("");
