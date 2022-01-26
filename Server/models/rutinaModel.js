@@ -15,6 +15,7 @@ const rutinaSchema = new mongoose.Schema(
 		categoria: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 	},
 	{ timestamps: true }
