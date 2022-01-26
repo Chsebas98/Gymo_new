@@ -12,7 +12,7 @@ const rutinaSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		categoria: {
+		categoria_rt: {
 			type: String,
 			required: true,
 			trim: true,

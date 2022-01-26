@@ -30,7 +30,9 @@ app.use(expressValidator());
 
 // routes
 const userRoutes = require("./routes/user");
+const rutinaRoutes = require("./routes/rutinaRoutes");
 app.use("/", userRoutes);
+app.use("/rutina", rutinaRoutes);
 
 // port
 const port = process.env.PORT || 8080;
