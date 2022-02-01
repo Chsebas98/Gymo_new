@@ -1,43 +1,29 @@
-// import modules
 const express = require("express");
-const { json, urlencoded } = express;
-const mongoose = require("mongoose");
-const morgan = require("morgan");
 const cors = require("cors");
-require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const conn = require("./database/database");
 const expressValidator = require("express-validator");
+require("dotenv").config();
 
-// app
+//imports
+const userRoutes = require("./routes/userRoutes");
+//app
 const app = express();
+//database
 
-// db
-mongoose
-	.connect(process.env.MONGO_URI, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	})
-	.then(() => console.log("DB CONNECTED"))
-	.catch((err) => console.log("DB CONNECTION ERROR", err));
-
-// middleware
-app.use(morgan("dev"));
+//carpeta public
+app.use(express.static("public"));
+//middlewares
 app.use(cors({ origin: true, credentials: true }));
-app.use(json());
-app.use(urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(expressValidator());
-
-// routes
-const userRoutes = require("./routes/user");
-const rutinaRoutes = require("./routes/rutinaRoutes");
+//routes
 app.use("/", userRoutes);
-app.use("/rutina", rutinaRoutes);
 
-// port
-const port = process.env.PORT || 8080;
-
-// listener
-const server = app.listen(port, () =>
-	console.log(`Server is running on port ${port}`)
-);
+//listener
+const port = process.env.PORT || 1000;
+app.listen(port, () => {
+	console.log(`Servidor corriendo en puerto: http://localhost:${port}`);
+});
