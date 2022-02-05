@@ -1,19 +1,20 @@
 import React, { useContext } from "react";
-
 import { UserContext } from "../UserContext";
+import Home_content from "../components/Home_content";
 
 const Home = () => {
 	const { user } = useContext(UserContext);
-	return (
-		<div className="container text-center" style={{ marginTop: "12rem" }}>
-			<div className="alert alert-primary p-5">
-				<h1>
-					{user && <span className="text-success">{user}'s</span>}{" "}
-					Home
-				</h1>
+	return <Home_content />;
+	/* 	if (user) return <Home_content />;
+	else
+		return (
+			<div className="container" style={{ marginTop: "1rem" }}>
+				<section className="motivate">
+					<img src="Assets/images/vida_fit.png" alt="Vida_fit" />
+					<span className="center">¡Sé tu mejor versión!</span>
+				</section>
 			</div>
-		</div>
-	);
+		); */
 };
 
 export default Home;
