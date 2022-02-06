@@ -43,7 +43,7 @@ const Home_content = () => {
 				</Link>
 			</div>
 			<div className="row text-center mt-5">
-				<section className="footer">
+				<section className="footer mb-3">
 					<CopyrightIcon /> Todos los derechos reservados
 				</section>
 			</div>
