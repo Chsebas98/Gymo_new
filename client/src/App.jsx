@@ -16,7 +16,7 @@ import Login from "./pages/Login";
 import { getUser } from "./api/user";
 import About from "./pages/About";
 import Opciones from "./pages/Opciones";
-import EJercicios_general from "./pages/Rutinas/EJercicios_general";
+import Ejercicios_general from "./pages/Rutinas/Ejercicios_general";
 import Recetas_general from "./pages/Recetas/Recetas_general";
 
 const App = () => {
@@ -43,7 +43,7 @@ const App = () => {
 					<Route exact path="/" component={Home} />
 					<Route exact path="/login" component={Login} />
 					<Route exact path="/options" component={Opciones} />
-					<Route exact path="/exercises" component={EJercicios_general} />
+					<Route exact path="/exercises" component={Ejercicios_general} />
 					<Route exact path="/recipes" component={Recetas_general} />
 				</UserContext.Provider>
 				<Route exact path="/signup" component={Signup} />
