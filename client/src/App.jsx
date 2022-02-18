@@ -15,6 +15,9 @@ import Login from "./pages/Login";
 // functions
 import { getUser } from "./api/user";
 import About from "./pages/About";
+import Opciones from "./pages/Opciones";
+import EJercicios_general from "./pages/Rutinas/EJercicios_general";
+import Recetas_general from "./pages/Recetas/Recetas_general";
 
 const App = () => {
 	const [user, setUser] = useState(null);
@@ -38,9 +41,12 @@ const App = () => {
 					<Header />
 
 					<Route exact path="/" component={Home} />
-					<Route exact path="/signup" component={Signup} />
 					<Route exact path="/login" component={Login} />
+					<Route exact path="/options" component={Opciones} />
+					<Route exact path="/exercises" component={EJercicios_general} />
+					<Route exact path="/recipes" component={Recetas_general} />
 				</UserContext.Provider>
+				<Route exact path="/signup" component={Signup} />
 				<Route exact path="/about" component={About} />
 			</Router>
 		</div>
