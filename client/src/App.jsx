@@ -7,17 +7,17 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // components
-import Header from "./components/Header";
-import Home from "./pages/Home";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
+import Header from "./Components/Header";
+import Home from "./Pages/Home";
+import Signup from "./Pages/Signup";
+import Login from "./Pages/Login";
 
 // functions
 import { getUser } from "./api/user";
-import About from "./pages/About";
-import Opciones from "./pages/Opciones";
-import Ejercicios_general from "./pages/Rutinas/Ejercicios_general";
-import Recetas_general from "./pages/Recetas/Recetas_general";
+import About from "./Pages/About";
+import Opciones from "./Pages/Opciones";
+import Ejercicios_general from "./Pages/Rutinas/Ejercicios_general";
+import Recetas_general from "./Pages/Recetas/Recetas_general";
 
 const App = () => {
 	const [user, setUser] = useState(null);

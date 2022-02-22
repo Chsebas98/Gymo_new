@@ -1,6 +1,6 @@
 import React from "react";
 import RunIcon from "@mui/icons-material/DirectionsRun";
-import CardRutina from "../../components/CardRutina";
+import CardRutina from "../../Components/CardRutina";
 import { Link } from "react-router-dom";
 
 const EJercicios_general = () => {
