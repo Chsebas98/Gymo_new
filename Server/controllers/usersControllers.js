@@ -62,14 +62,14 @@ exports.login = async (req, res) => {
 		conn.query(
 			"SELECT * FROM users WHERE email_user=?",
 			[us_email],
-			async (err, results) => {
+			(err, results) => {
 				if (
 					results.length == 0 ||
 					!bcrypt.compare(us_password, results[0].password_user)
 				) {
 					res
 						.status(401)
-						.json({ erorr: "El email o la contraseña está incorrecto" });
+						.json({ error: "El email o la contraseña está incorrecto" });
 				} else {
 					const id = results[0].id;
 					//INICIALIZACIÓN DE TOKENS
@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
 	}
 };
 exports.logout = (req, res) => {
-	/* res.clearCookie("jwt"); */
+	res.clearCookie("jwt");
 
 	return res.json({
 		message: "Ha cerrado la sesión",

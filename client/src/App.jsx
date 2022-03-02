@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 // components
 import Header from "./Components/Header";
 import Home from "./Pages/Home";
-import Signup from "./Pages/Signup";
+import Signup from "./Pages/SignUp";
 import Login from "./Pages/Login";
 
 // functions

@@ -73,3 +73,15 @@ exports.userById = async (req, res, next) => {
 	console.log(user);
 	next();
 };
+exports.isAdmin = async (req, res, next) => {
+	/* const user = await conn.query(
+		"SELECT * FROM users WHERE id=? and admin=1",
+		[req.id],
+		(err, results) => {
+			if (err || !results)
+				return res.status(403).json({ error: "El usuario no es administrador" });
+		}
+	);
+	req.user = user; */
+	next();
+};

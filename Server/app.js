@@ -7,6 +7,7 @@ require("dotenv").config();
 
 //imports
 const userRoutes = require("./routes/userRoutes");
+const recetaRoutes = require("./routes/recetaRoutes");
 //app
 const app = express();
 //database
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(expressValidator());
 //routes
 app.use("/", userRoutes);
+app.use("/receta", recetaRoutes);
 
 //listener
 const port = process.env.PORT || 1000;
