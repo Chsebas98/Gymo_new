@@ -2,89 +2,42 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const conn = require("../database/database");
 require("dotenv").config();
-const { promisfy } = require("util"); //modulo de node para promesas
-
+/* http://localhost:1000/register */
 exports.register = async (req, res) => {
 	try {
-		const us_name = req.body.username;
-		const us_email = req.body.email;
-		const us_password = req.body.password;
+		const us_name = req.body.name_user;
+		const us_email = req.body.email_user;
+		const us_password = req.body.password_user;
+		const admin = req.body.admin;
 		//verificar si el usuario ya existe
-		//console.log(us_name + " " + us_email + " " + us_password);
-
-		//USERNAME EXIST
-		conn.query(
-			"SELECT * FROM users WHERE name_user LIKE ? OR email_user LIKE ?",
-			[us_name, us_email],
-			(err, data) => {
-				if (err) {
-					return err;
-				}
-				if (data.length > 0) {
-					res.status(403).json({ error: "El usuario ya existe." });
-				}
-			}
-		);
-
-		//hash password
-		let salt = bcrypt.genSaltSync(9);
-		let hashPassword = bcrypt.hashSync(us_password, salt);
-		//Nuevo usuario
-		//console.log("PASS: " + hashPassword + " En teoria se registra");
 		await conn.query(
-			"INSERT INTO users (name_user,email_user,password_user,CREATED_AT)VALUES(?,?,?,?)",
-			[us_name, us_email, hashPassword, new Date()],
-			(err) => {
-				if (err) return console.log(err);
-				return res
-					.status(200)
-					.json({ message: "Usuario Registrado correctamente" });
-			}
-		);
-		/* await conn.query(
-			"INSERT INTO users (name_user,email_user,password_user,admin,CREATED_AT) VALUES (?,?,?,?,?,?)",
-			[us_name, us_email, hashPassword, 0, new Date()],
-			(err, data) => {
-				if (err) return err;
-				res.json({ message: "Usuario Registrado." });
-			}
-		); */
-	} catch (error) {
-		console.log(error);
-	}
-};
-exports.login = async (req, res) => {
-	try {
-		//obtengo variables del body
-		const us_email = req.body.email;
-		const us_password = req.body.password;
-
-		conn.query(
-			"SELECT * FROM users WHERE email_user=?",
-			[us_email],
-			(err, results) => {
-				if (
-					results.length == 0 ||
-					!bcrypt.compare(us_password, results[0].password_user)
-				) {
-					res
-						.status(401)
-						.json({ error: "El email o la contraseña está incorrecto" });
+			"SELECT id_user FROM users WHERE name_user LIKE ? OR email_user LIKE ?",
+			[us_name, us_email],
+			(err, result) => {
+				if (result.length > 0) {
+					//error
+					return res.status(409).send({ message: "El Usuario ya existe" });
 				} else {
-					const id = results[0].id;
-					//INICIALIZACIÓN DE TOKENS
-					const token = jwt.sign({ id: id }, process.env.JWT_SECRET, {
-						expiresIn: process.env.JWT_TIEMPO_EXPIRA,
-					});
-					const cookieOptions = {
-						expires: new Date(
-							Date.now() + process.env.JWT_COOKIE_EXPIRA * 24 * 60 * 60 * 1000
-						),
-						httpOnly: true,
-					};
-					res.cookie("jwt", token, cookieOptions);
-					return res.status(200).json({
-						message: "Login Exitoso",
+					//user no esta en uso
+					//HASH PASWWORD
+					bcrypt.hash(us_password, 10, (err, hash) => {
+						if (err) {
+							throw err;
+							return res.status(500).send({ message: err });
+						} else {
+							//Nuevo usuario
+							conn.query(
+								"INSERT INTO users (name_user,email_user,password_user,admin,CREATED_AT) VALUES(?,?,?,?,?)",
+								[us_name, us_email, hash, admin, new Date()],
+								(err, result) => {
+									if (err) {
+										throw err;
+										return res.status(400).send({ message: err });
+									}
+									return res.status(201).send({ message: "Registrado Correctamente" });
+								}
+							);
+						}
 					});
 				}
 			}
@@ -93,6 +46,59 @@ exports.login = async (req, res) => {
 		console.log(error);
 	}
 };
+/* http://localhost:1000/login */
+exports.login = (req, res) => {
+	//obtengo variables del body
+	const us_email = req.body.email_user;
+	const us_password = req.body.password_user;
+
+	conn.query(
+		`SELECT * FROM users WHERE email_user=${conn.escape(us_email)}`,
+		(err, result) => {
+			if (err) {
+				throw err;
+				return res.status(400).send({
+					message: err,
+				});
+			}
+			if (!result.length) {
+				return res.status(400).send({
+					message: "Usuario o Contraseña incorrecta",
+				});
+			}
+			bcrypt.compare(us_password, result[0]["password_user"], (bErr, bResult) => {
+				if (bErr) {
+					throw err;
+					return res
+						.status(400)
+						.send({ message: "Usuario o Contraseña incorrecta" });
+				}
+				if (bResult) {
+					//password coincide
+					const token = jwt.sign(
+						{
+							name_user: result[0].name_user,
+							id_user: result[0].id_user,
+						},
+						procces.env.JWT_SECRET,
+						{
+							expires_in: process.env.JWT_TIEMPO_EXPIRA,
+						}
+					);
+					return res.status(200).send({
+						message: "Ha iniciado sesión",
+						token,
+						user: result[0],
+					});
+				}
+				return res.status(200).send({
+					message: "Usuario o Contraseña incorrecta",
+				});
+			});
+		}
+	);
+};
+/* http://localhost:1000/logout */
 exports.logout = (req, res) => {
 	res.clearCookie("jwt");
 
@@ -100,12 +106,4 @@ exports.logout = (req, res) => {
 		message: "Ha cerrado la sesión",
 	});
 };
-//SI EL USUARIO ESTÁ AUTENTICADO
-exports.isLog = async (req, res) => {
-	const { username } = req.user;
-
-	return res.status(200).json({
-		message: "Usuario está con sesión iniciada",
-		username,
-	});
-};
+/* http://localhost:1000/secret_route */

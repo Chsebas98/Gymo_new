@@ -1,22 +1,18 @@
 const express = require("express");
 const router = express.Router();
 //controllers
-const {
-	register,
-	login,
-	isLog,
-	logout,
-} = require("../controllers/usersControllers");
+const { register, login, logout } = require("../controllers/usersControllers");
 //middlewares
 const {
 	userRegisterValidator,
+	isLog,
 	userById,
 	verifyToken,
 } = require("../middlewares/usersMiddlewares");
 //rutas
+router.post("/login", login);
 router.post("/register", userRegisterValidator, register);
 router.get("/logout", logout);
-router.post("/login", login);
 
 router.get("/user", verifyToken, userById, isLog);
 

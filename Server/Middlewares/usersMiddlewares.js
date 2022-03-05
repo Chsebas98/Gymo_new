@@ -27,40 +27,50 @@ exports.verifyToken = (req, res, next) => {
 };
 
 exports.userRegisterValidator = (req, res, next) => {
-	// username is not null
-	req.check("username", "Username is required").notEmpty();
+	//User debe tener minimo 3
+	const username = req.body.name_user;
+	const password = req.body.password_user;
+	const confirmPassword = req.body.confirmPassword;
 
-	// email is not null, valid, and normalized
-	req.check("email", "Email is required").notEmpty();
-	req.check("email", "Invalid Email").isEmail();
-
-	// check password
-	req.check("password", "Password is required").notEmpty();
-	req
-		.check("password")
-		.isLength({ min: 6 })
-		.withMessage("Contraseña debe tener al menos 6 caracteres");
-
-	req
-		.check(
-			"password",
-			"Password debe tener una letra mayúscula, una minúscula, un caracter especial y un número"
+	if (!username || username.length < 3) {
+		return res
+			.status(400)
+			.send({ message: "Username debe tener mínimo 3 caracteres" });
+	}
+	//password mínimo 6
+	if (!password || password.length < 6) {
+		return res
+			.status(400)
+			.send({ message: "Password debe tener mínimo 6 caracteres" });
+	}
+	if (
+		!password ||
+		!password.match(
+			/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/,
+			"i"
 		)
-		.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/, "i");
-
-	// check for errors
-	const errors = req.validationErrors();
-	// if error, show the first one as it happens
-	if (errors) {
-		const firstError = errors.map((err) => err.msg)[0];
-
-		return res.status(400).json({
-			error: firstError,
+	) {
+		return res.status(400).send({
+			message:
+				"Password debe tener una letra mayúscula, una minúscula, un caracter especial y un número",
 		});
 	}
+	//Verificar password repeated
+	if (!confirmPassword || password != confirmPassword) {
+		return res.status(400).send({ message: "Las contraseñas deben coincidir" });
+	}
 
-	// process to next middleware
 	next();
+};
+
+/* Is Log */
+exports.isLog = async (req, res) => {
+	const { username } = req.user;
+
+	return res.status(200).json({
+		message: "Usuario está con sesión iniciada",
+		username,
+	});
 };
 
 exports.userById = async (req, res, next) => {
