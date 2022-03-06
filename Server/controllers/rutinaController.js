@@ -65,7 +65,7 @@ exports.editRutina = async (req, res) => {
 	
 	await conn.query(
 		"SELECT * FROM rutina WHERE id_rutina=?",
-		[id_rc],
+		[id_rt],
 		(err, result) => {
 			if (err || result.length == 0)
 				return res.status(400).send({ message: "No existe la rutina" });
