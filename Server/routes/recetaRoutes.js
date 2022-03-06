@@ -10,7 +10,6 @@ const {
 } = require("../controllers/recetaController");
 //middlewares
 const { isAdmin } = require("../middlewares/usersMiddlewares");
-const {} = require("../middlewares/recetaMiddlewares");
 //rutas
 
 router.post("/create", isAdmin, crearReceta);
