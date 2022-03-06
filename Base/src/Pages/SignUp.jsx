@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { register } from "../Api/user";
-import { useNavigate } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
+
 // design
 import {
 	TextField,
@@ -16,15 +16,19 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-const Register = () => {
-	let navigate = useNavigate();
+
+// functions
+import { register } from "../api/user";
+
+const Signup = () => {
+	const history = useHistory();
+
 	// form states
 	const [username, setUsername] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
-	const [admin, setAdmin] = useState(false);
 
 	// password validation
 	let hasSixChar = password.length >= 6;
@@ -32,33 +36,28 @@ const Register = () => {
 	let hasUpperChar = /(.*[A-Z].*)/.test(password);
 	let hasNumber = /(.*[0-9].*)/.test(password);
 	let hasSpecialChar = /(.*[^a-zA-Z0-9].*)/.test(password);
-	//functions
+
 	const handleRegister = async (e) => {
 		e.preventDefault();
+
 		try {
-			const res = await register({
-				name_user: username,
-				email_user: email,
-				password_user: password,
-				confirmPassword,
-				admin,
-			});
-			if (res.error) {
-				alert(res.error);
-			} else {
-				alert(res.message);
-				//redirect a login page
-				navigate("/login");
+			const res = await register({ username, email, password });
+			if (res.error) alert.error(res.error);
+			else {
+				alert.success(res.message);
+				// redirect the user to login
+				history.replace("/login");
 			}
-		} catch (error) {
-			alert(error);
+		} catch (err) {
+			alert.error(err);
 		}
 	};
-	return (
+
+	return !user ? (
 		<div className="container mt-5 mb-5 col-10 col-sm-8 col-md-6 col-lg-5">
-			<div className="mb-5 alert alert-primary bg-dark">
-				<div className="text-center mb-3 ">
-					<label htmlFor="" className="h2 text-light">
+			<div className="mb-5 alert alert-primary">
+				<div className="text-center mb-3">
+					<label htmlFor="" className="h2">
 						Registro de Usuario
 					</label>
 				</div>
@@ -100,7 +99,7 @@ const Register = () => {
 						/>
 					</FormControl>
 					{password && (
-						<div className="ml-1" style={{ columns: 2, color: "black" }}>
+						<div className="ml-1" style={{ columns: 2 }}>
 							<div>
 								{hasSixChar ? (
 									<span className="text-success">
@@ -169,12 +168,12 @@ const Register = () => {
 						</div>
 					)}
 				</div>
-				<div className="form-group mb-3">
+				<div className="form-grou mb-3">
 					<TextField
 						size="small"
 						type="password"
 						variant="outlined"
-						className="form-control text-light"
+						className="form-control"
 						label="Confirmar Password"
 						value={confirmPassword}
 						onChange={(e) => setConfirmPassword(e.target.value)}
@@ -190,21 +189,9 @@ const Register = () => {
 					)}
 				</div>
 
-				<div className="form-group mb-3">
-					<TextField
-						size="small"
-						variant="outlined"
-						className="form-control"
-						label="Administrador"
-						value={admin}
-						onChange={(e) => setAdmin(e.target.value)}
-					/>
-				</div>
-
 				<div className="text-center mt-4">
 					<Button
 						variant="contained"
-						className="text-dark bg-light"
 						disabled={
 							!username ||
 							!email ||
@@ -224,7 +211,9 @@ const Register = () => {
 				</div>
 			</div>
 		</div>
+	) : (
+		<Redirect to="/" />
 	);
 };
 
-export default Register;
+export default Signup;

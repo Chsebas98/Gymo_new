@@ -98,3 +98,19 @@ exports.logout = (req, res) => {
 	});
 };
 /* http://localhost:1000/secret_route */
+exports.secret = async (req, res) => {
+	const token = req.cookies.jwt;
+	const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+	const id_user = tokenData._id;
+	/* console.log(id_user); */
+	await conn.query(
+		"SELECT * FROM users WHERE id_user=?",
+		[id_user],
+		(err, results) => {
+			if (err || !results || results.length == 0)
+				return res.status(400).json({ error: "Usuario no encontrado" });
+			//añado el objeto user con toda la info
+			return res.status(200).send({ user: results[0] });
+		}
+	);
+};
