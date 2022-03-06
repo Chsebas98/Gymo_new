@@ -17,6 +17,6 @@ router.post("/create", isAdmin, crearReceta);
 router.get("/view", viewReceta);
 router.get("/view/:id", viewOneReceta);
 router.put("/edit/:id", isAdmin, editReceta);
-router.delete("delete/:id", isAdmin, deleteReceta);
+router.delete("/delete/:id", isAdmin, deleteReceta);
 
 module.exports = router;

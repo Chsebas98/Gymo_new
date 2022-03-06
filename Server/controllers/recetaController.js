@@ -56,7 +56,7 @@ exports.viewOneReceta = async (req, res) => {
 	);
 };
 /* EDITAR RECETA
-
+http://localhost:1000/receta/edit/id
 */
 exports.editReceta = async (req, res) => {
 	const id_rc = req.params.id;
@@ -76,7 +76,7 @@ exports.editReceta = async (req, res) => {
 					"UPDATE receta SET name_receta=?,descripcion_receta=?,estado_receta=? WHERE id_receta=?",
 					[name_rc, descripcion_rc, estado_rc, id_rc],
 					(err, result) => {
-						if (err) return res.status(400).send({ message: "Fallido" + err });
+						if (err) return res.status(400).send({ message: "Fallido " + err });
 						if (result)
 							return res.status(200).send({ message: "Actualizado Correctamente" });
 					}
@@ -85,4 +85,28 @@ exports.editReceta = async (req, res) => {
 		}
 	);
 };
-exports.deleteReceta = async (req, res) => {};
+/* DELETE RECETA
+http://localhost:1000/receta/delete/id
+*/
+exports.deleteReceta = async (req, res) => {
+	const id_rc = req.params.id;
+	await conn.query(
+		"SELECT * FROM receta WHERE id_receta=?",
+		[id_rc],
+		(err, result) => {
+			if (err || result.length == 0)
+				return res.status(400).send({ message: "No existe la receta" });
+			else {
+				conn.query(
+					"UPDATE receta SET estado_receta=0 WHERE id_receta=?",
+					[id_rc],
+					(err, result) => {
+						if (err) return res.status(400).send({ message: "Fallido " + err });
+						if (result)
+							return res.status(200).send({ message: "Eliminado Correctamente" });
+					}
+				);
+			}
+		}
+	);
+};
