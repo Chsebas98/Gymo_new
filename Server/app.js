@@ -8,6 +8,7 @@ require("dotenv").config();
 //imports
 const userRoutes = require("./routes/userRoutes");
 const recetaRoutes = require("./routes/recetaRoutes");
+const rutinaRoutes = require("./routes/rutinaRoutes");
 //app
 const app = express();
 //database
@@ -23,7 +24,7 @@ app.use(expressValidator());
 //routes
 app.use("/", userRoutes);
 app.use("/receta", recetaRoutes);
-
+app.use("/rutina", rutinaRoutes);
 //listener
 const port = process.env.PORT || 1000;
 app.listen(port, () => {
