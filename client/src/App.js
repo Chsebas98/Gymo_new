@@ -5,9 +5,10 @@ import Header from "./Components/Header";
 
 /* Pages */
 import Register from "./Pages/Register";
-import Login from "./Pages/Login.jsx";
+import Login from "./Pages/Login";
 import About from "./Pages/About";
 import Home_content from "./Components/Home_content";
+import { Ejercicios } from "./Pages/Rutinas/Ejercicios";
 
 const App = () => {
 	const [user, setUser] = useState("");
@@ -27,6 +28,7 @@ const App = () => {
 					<Route exact path="/register" element={<Register />} />
 					<Route exact path="/login" element={<Login />} />
 					<Route exact path="/about" element={<About />} />
+					<Route exact path="/ejercicios" element={<Ejercicios />} />
 				</Routes>
 			</Router>
 		</>
