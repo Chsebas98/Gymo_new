@@ -1,27 +1,29 @@
 const jwt = require("jsonwebtoken");
 const conn = require("../database/database");
+/* Is Log */
 exports.verifyToken = (req, res, next) => {
 	let accessToken = req.cookieOptions.jwt;
 
 	// if there is no token in the cookies, request is unauthorized
 	if (!accessToken) {
-		return res.status(403).json({
-			error: "Token inválido",
+		return res.status(400).send({
+			error: "Sesión inválida",
 		});
 	}
 
 	let payload;
+
 	try {
 		// verify the token jwt.verify
 		// throws an erro if token has expired or has an invalid signature
 		payload = jwt.verify(accessToken, process.env.JWT_SECRET);
-		req._id = payload._id;
+		res.userData = payload;
 
 		next();
 	} catch (e) {
 		// return req unauthorized error
-		return res.status(403).json({
-			error: "Token inválido",
+		return res.status(403).send({
+			error: "Sesión inválida",
 		});
 	}
 };
@@ -63,35 +65,29 @@ exports.userRegisterValidator = (req, res, next) => {
 	next();
 };
 
-/* Is Log */
-exports.isLog = async (req, res) => {
-	const { username } = req.user;
-
-	return res.status(200).json({
-		message: "Usuario está con sesión iniciada",
-		username,
-	});
-};
-
-exports.userById = async (req, res, next) => {
+/* exports.userById = async (req, res, next) => {
 	conn.query("SELECT * FROM users WHERE id=?", [req.id], (err, results) => {
 		if (err || !results)
 			return res.status(404).json({ error: "Usuario no encontrado" });
+		//añado el objeto user con toda la info
+		req.user = user;
+		console.log(user);
 	});
-	//añado el objeto user con toda la info
-	req.user = user;
-	console.log(user);
+
 	next();
-};
+}; */
 exports.isAdmin = async (req, res, next) => {
-	/* const user = await conn.query(
-		"SELECT * FROM users WHERE id=? and admin=1",
-		[req.id],
-		(err, results) => {
-			if (err || !results)
-				return res.status(403).json({ error: "El usuario no es administrador" });
+	try {
+		const admin = req.cookies.jwt;
+		//console.log(admin);
+		const tokenData = jwt.verify(admin, process.env.JWT_SECRET);
+		//console.log(tokenData);
+		if (tokenData.role === 1) {
+			next();
+		} else {
+			res.status(409).send({ message: "Acceso no autorizado" });
 		}
-	);
-	req.user = user; */
-	next();
+	} catch (error) {
+		console.log(error);
+	}
 };

@@ -47,56 +47,47 @@ exports.register = async (req, res) => {
 	}
 };
 /* http://localhost:1000/login */
-exports.login = (req, res) => {
-	//obtengo variables del body
-	const us_email = req.body.email_user;
-	const us_password = req.body.password_user;
-
-	conn.query(
-		`SELECT * FROM users WHERE email_user=${conn.escape(us_email)}`,
-		(err, result) => {
-			if (err) {
-				throw err;
-				return res.status(400).send({
-					message: err,
-				});
-			}
-			if (!result.length) {
-				return res.status(400).send({
-					message: "Usuario o Contraseña incorrecta",
-				});
-			}
-			bcrypt.compare(us_password, result[0]["password_user"], (bErr, bResult) => {
-				if (bErr) {
-					throw err;
-					return res
-						.status(400)
-						.send({ message: "Usuario o Contraseña incorrecta" });
-				}
-				if (bResult) {
-					//password coincide
-					const token = jwt.sign(
-						{
-							name_user: result[0].name_user,
-							id_user: result[0].id_user,
-						},
-						procces.env.JWT_SECRET,
-						{
-							expires_in: process.env.JWT_TIEMPO_EXPIRA,
-						}
-					);
-					return res.status(200).send({
-						message: "Ha iniciado sesión",
+exports.login = async (req, res) => {
+	try {
+		//obtengo variables del body
+		const us_email = req.body.email_user;
+		const us_password = req.body.password_user;
+		await conn.query(
+			"SELECT * FROM users WHERE email_user=?",
+			[us_email],
+			(err, results) => {
+				if (
+					results.length == 0 ||
+					!bcrypt.compare(us_password, results[0].password_user)
+				) {
+					res
+						.status(401)
+						.json({ error: "El email o la contraseña está incorrecto" });
+				} else {
+					const id = results[0].id_user;
+					const role = results[0].admin;
+					//INICIALIZACIÓN DE TOKENS
+					const token = jwt.sign({ _id: id, role: role }, process.env.JWT_SECRET, {
+						expiresIn: process.env.JWT_TIEMPO_EXPIRA,
+					});
+					const cookieOptions = {
+						expires: new Date(
+							Date.now() + process.env.JWT_COOKIE_EXPIRA * 24 * 60 * 60 * 1000
+						),
+						httpOnly: true,
+					};
+					res.cookie("jwt", token, cookieOptions);
+					return res.status(200).json({
+						message: "Login Exitoso",
 						token,
-						user: result[0],
+						user: results[0],
 					});
 				}
-				return res.status(200).send({
-					message: "Usuario o Contraseña incorrecta",
-				});
-			});
-		}
-	);
+			}
+		);
+	} catch (error) {
+		console.log(error);
+	}
 };
 /* http://localhost:1000/logout */
 exports.logout = (req, res) => {

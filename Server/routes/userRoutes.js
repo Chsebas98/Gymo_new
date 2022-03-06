@@ -5,15 +5,15 @@ const { register, login, logout } = require("../controllers/usersControllers");
 //middlewares
 const {
 	userRegisterValidator,
-	isLog,
-	userById,
+	isAdmin,
 	verifyToken,
 } = require("../middlewares/usersMiddlewares");
 //rutas
 router.post("/login", login);
 router.post("/register", userRegisterValidator, register);
 router.get("/logout", logout);
-
-router.get("/user", verifyToken, userById, isLog);
+router.get("/test", isAdmin);
+/* RUTA SECRETA */
+router.get("/secret", verifyToken);
 
 module.exports = router;
