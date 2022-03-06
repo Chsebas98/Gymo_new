@@ -34,6 +34,7 @@ exports.crearRutina = async (req, res) => {
 		return res.status(400).send({ message: "Fallido crear rutina" });
 	}
 };
+/* View Rutina */
 exports.viewRutina = async (req, res) => {
 	await conn.query("SELECT * FROM rutina", (err, result) => {
 		if (err || !result || result.length == 0)
