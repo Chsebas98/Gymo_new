@@ -1,32 +1,10 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
-import { UserContext } from "../UserContext";
-
-// functions
-import { logout } from "../api/user";
+import React from "react";
+import { NavLink } from "react-router-dom";
 
 const Header = () => {
-	const history = useHistory();
-	const { user, setUser } = useContext(UserContext);
-
-	const handleLogout = (e) => {
-		e.preventDefault();
-
-		logout()
-			.then((res) => {
-				toast.success(res.message);
-				// set user to null
-				setUser(null);
-				// redirect the user to login
-				history.push("/login");
-			})
-			.catch((err) => console.error(err));
-	};
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-			<Link className="navbar-brand" to="/">
+			<NavLink className="navbar-brand" to="/">
 				<img
 					src="/Assets/Images/arm.png"
 					alt="Logo"
@@ -35,7 +13,7 @@ const Header = () => {
 					className="d-inline-block align-text-top"
 				/>
 				<span> </span>Gymo
-			</Link>
+			</NavLink>
 			<button
 				className="navbar-toggler"
 				type="button"
@@ -51,37 +29,35 @@ const Header = () => {
 				{/* Alineación de navbar izquierda */}
 				<ul className="navbar-nav">
 					<li className="nav-item">
-						<Link className="nav-link" aria-current="page" to="/about">
+						<NavLink className="nav-link" aria-current="page" to="/about">
 							Acerca de Nosotros
-						</Link>
+						</NavLink>
 					</li>
 				</ul>
 				{/* Alineación de navbar derecha */}
 				<ul className="navbar-nav ms-auto p-2 bd-highlight">
-					{!user ? (
-						<>
-							<li className="nav-item">
-								<Link className="nav-link" to="/signup">
-									Registrate
-								</Link>
-							</li>
-							<li class="nav-item">
-								<Link className="nav-link" to="/login">
-									Inicia sesión
-								</Link>
-							</li>
-						</>
-					) : (
-						<li class="nav-item">
-							<span
-								className="nav-link"
-								style={{ cursor: "pointer" }}
-								onClick={handleLogout}
-							>
-								Logout
-							</span>
+					<>
+						<li className="nav-item">
+							<NavLink className="nav-link" to="/register">
+								Registrate
+							</NavLink>
 						</li>
-					)}
+						<li class="nav-item">
+							<NavLink className="nav-link" to="/login">
+								Inicia sesión
+							</NavLink>
+						</li>
+					</>
+
+					<li class="nav-item">
+						<span
+							className="nav-link"
+							style={{ cursor: "pointer" }}
+							/* onClick={handleLogout} */
+						>
+							Logout
+						</span>
+					</li>
 				</ul>
 			</div>
 		</nav>
