@@ -85,7 +85,7 @@ exports.editRutina = async (req, res) => {
 };
 
 exports.deleteRutina = async (req, res) => {
-	const id_rc = req.params.id;
+	const id_rt = req.params.id;
 	await conn.query(
 		"SELECT * FROM receta WHERE id_rutina=?",
 		[id_rt],
@@ -95,7 +95,7 @@ exports.deleteRutina = async (req, res) => {
 			else {
 				conn.query(
 					"UPDATE rutina SET estado_rutina=0 WHERE id_rutina=?",
-					[id_rc],
+					[id_rt],
 					(err, result) => {
 						if (err) return res.status(400).send({ message: "Fallido " + err });
 						if (result)
