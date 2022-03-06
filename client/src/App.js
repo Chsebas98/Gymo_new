@@ -8,6 +8,7 @@ import Home from "./Pages/Home";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login.jsx";
 import About from "./Pages/About";
+import { Ejercicios } from "./Pages/Rutinas/Ejercicios";
 
 const App = () => {
 	return (
@@ -19,6 +20,7 @@ const App = () => {
 					<Route exact path="/register" element={<Register />} />
 					<Route exact path="/login" element={<Login />} />
 					<Route exact path="/about" element={<About />} />
+					<Route exact path="/ejercicios" element={<Ejercicios />} />
 				</Routes>
 			</Router>
 		</>
