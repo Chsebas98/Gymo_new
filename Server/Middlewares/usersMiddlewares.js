@@ -27,6 +27,21 @@ exports.verifyToken = (req, res, next) => {
 		});
 	}
 };
+exports.LogHelp = (req, res, next) => {
+	const accessToken = req.headers.authorization;
+	if (!accessToken) {
+		return res.status(400).send({ message: "Sesion no valida" });
+	}
+	try {
+		const authHeader = accessToken;
+		const token = authHeader.split(" ")[1];
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		req.userData = decoded;
+		next();
+	} catch (error) {
+		return res.status(400).send({ message: "Sesión no valida" });
+	}
+};
 
 exports.userRegisterValidator = (req, res, next) => {
 	//User debe tener minimo 3
@@ -65,17 +80,6 @@ exports.userRegisterValidator = (req, res, next) => {
 	next();
 };
 
-/* exports.userById = async (req, res, next) => {
-	conn.query("SELECT * FROM users WHERE id=?", [req.id], (err, results) => {
-		if (err || !results)
-			return res.status(404).json({ error: "Usuario no encontrado" });
-		//añado el objeto user con toda la info
-		req.user = user;
-		console.log(user);
-	});
-
-	next();
-}; */
 exports.isAdmin = async (req, res, next) => {
 	try {
 		const admin = req.cookies.jwt;
@@ -91,3 +95,15 @@ exports.isAdmin = async (req, res, next) => {
 		console.log(error);
 	}
 };
+
+/* exports.userById = async (req, res, next) => {
+	conn.query("SELECT * FROM users WHERE id=?", [req.id], (err, results) => {
+		if (err || !results)
+			return res.status(404).json({ error: "Usuario no encontrado" });
+		//añado el objeto user con toda la info
+		req.user = user;
+		console.log(user);
+	});
+
+	next();
+}; */
